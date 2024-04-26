@@ -21,6 +21,7 @@ import com.funny.translation.theme.LightDarkMode
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.long_text.EditablePrompt
+import com.funny.translation.translate.ui.social.ComposeChat
 import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import com.funny.translation.translate.utils.SortResultUtils
@@ -39,7 +40,7 @@ class FunnyApplication : BaseApplication() {
             // 仅在 64 位时加载
             System.loadLibrary("monet")
         }
-
+        ComposeChat.accountProvider.init(ctx)
         FunnyUncaughtExceptionHandler.getInstance().init(ctx)
         ToastUtils.init(this)
         ToastUtils.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 260)

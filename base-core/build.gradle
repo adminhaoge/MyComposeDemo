@@ -12,6 +12,10 @@ android {
         buildConfig true
     }
     namespace 'com.funny.translation.core'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 dependencies {

@@ -15,7 +15,7 @@ fun Modifier.animatedGradientBackground(
     color1: Color,
     color2: Color,
 ) = composed {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "")
     val offset by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.7f,
@@ -25,7 +25,7 @@ fun Modifier.animatedGradientBackground(
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse,
-        )
+        ), label = ""
     )
 
     Modifier.drawWithContent {

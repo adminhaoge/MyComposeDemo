@@ -1,3 +1,5 @@
+
+//TODO 文件待迁移
 public final class Versions {
 
     // Project versions
@@ -7,7 +9,7 @@ public final class Versions {
     // Platform & Tool versions
     public final static String buildToolsVersion = "34.0.0";
     public final static int compileSdkVersion = 34;
-    public final static int minSdkVersion = 21;
+    public final static int minSdkVersion = 23;
     public final static int targetSdkVersion = 33;
 
     // Dependency versions

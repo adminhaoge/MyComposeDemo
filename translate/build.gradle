@@ -5,44 +5,10 @@ plugins {
     id 'kotlinx-serialization'
 }
 
-apply from:rootProject.file('base.gradle')
+apply plugin: DefaultGradlePlugin
 
 android {
-
-    signingConfigs {
-        release {
-            // 如果需要打release包，请在项目根目录下自行添加此文件
-            /**
-             *  STORE_FILE=yourAppStroe.keystore
-                STORE_PASSWORD=yourStorePwd
-                KEY_ALIAS=yourKeyAlias
-                KEY_PASSWORD=yourAliasPwd
-             */
-            def props = new Properties()
-            def propFile = new File("signing.properties")
-            if (propFile.exists()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(propFile), "utf-8"))
-                props.load(reader)
-
-                storeFile file(props['STORE_FILE'])
-                storePassword props['STORE_PASSWORD']
-                keyAlias props['KEY_ALIAS']
-                keyPassword props['KEY_PASSWORD']
-
-                enableV1Signing true
-                enableV2Signing true
-                enableV3Signing true
-            }
-        }
-    }
-
     defaultConfig {
-        applicationId "com.funny.translation.tmp"
-        minSdkVersion Versions.minSdkVersion
-        targetSdk Versions.targetSdkVersion
-        versionCode Versions.versionCode
-        versionName Versions.versionName
         resourceConfigurations += ['zh-rCN', 'en']
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
@@ -52,15 +18,6 @@ android {
             arg('room.schemaLocation', "$projectDir/schemas")
             arg("room.incremental","true")
             arg("room.expandProjection","true")
-        }
-    }
-
-    productFlavors {
-        common {
-        }
-        google {
-            applicationIdSuffix ".google"
-            versionNameSuffix "-google"
         }
     }
 
@@ -85,30 +42,15 @@ android {
 //        }
     }
 
-    buildTypes {
-        release {
-            //临时可调式
-//            debuggable true
-            //开启代码混淆
-            minifyEnabled true
-            //Zipalign优化
-            zipAlignEnabled true
-            //移除无用的resource文件
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-        debug {
-            applicationIdSuffix ".debug"
-            minifyEnabled false
-            signingConfig signingConfigs.release
-        }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
-    buildFeatures {
-        compose true
-        buildConfig true
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
 
     namespace 'com.funny.translation.translate'
@@ -117,6 +59,15 @@ android {
 configurations.configureEach {
     resolutionStrategy {
         force "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
+    }
+}
+
+kotlin {
+    // 设置语言版本为 1.9
+    // 可以使用最新的语言版本，确保包含 "data objects" 功能
+    // 也可以直接设置为最新版本，例如 "1.5"
+    sourceSets.all {
+        languageSettings.languageVersion = "1.9"
     }
 }
 
@@ -147,7 +98,7 @@ dependencies {
 
     implementation "androidx.documentfile:documentfile:1.0.1"
 
-
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.13'
 
     implementation 'com.github.princekin-f:EasyFloat:2.0.4'
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'
@@ -193,18 +144,18 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-afterEvaluate {
-    // debug 和 release 时执行加密代码
-    var signApkTask = project(":base-core").tasks.named("signApk")
-    tasks.findAll {
-        it.name.startsWith("assemble") && !it.name.endsWith("Test")
-    }.forEach { task ->
-//        println("find task name: " + task.name)
-        // 打包前先加密下 Js
-        task.dependsOn(":base-core:encryptFunnyJs")
-        // 结束后签个名
-        task.finalizedBy(signApkTask)
-    }
-}
+//afterEvaluate {
+//    // debug 和 release 时执行加密代码
+//    var signApkTask = project(":base-core").tasks.named("signApk")
+//    tasks.findAll {
+//        it.name.startsWith("assemble") && !it.name.endsWith("Test")
+//    }.forEach { task ->
+////        println("find task name: " + task.name)
+//        // 打包前先加密下 Js
+//        task.dependsOn(":base-core:encryptFunnyJs")
+//        // 结束后签个名
+//        task.finalizedBy(signApkTask)
+//    }
+//}
 
 

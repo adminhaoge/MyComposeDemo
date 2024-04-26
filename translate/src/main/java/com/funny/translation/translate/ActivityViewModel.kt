@@ -16,6 +16,7 @@ import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.network.api
 import com.funny.translation.translate.bean.NoticeInfo
+import com.funny.translation.translate.ui.social.ComposeChat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,6 +48,7 @@ class ActivityViewModel : ViewModel(), LifecycleEventObserver {
     fun refreshUserInfo() {
         if (userInfo.isValid()) {
             viewModelScope.launch {
+                ComposeChat.accountProvider.login(userInfo.username)
                 api(UserUtils.userService::getInfo, uid) {
                     success {
                         it.data?.let {  user -> AppConfig.login(user) }

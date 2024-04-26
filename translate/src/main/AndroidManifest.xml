@@ -17,7 +17,7 @@
 
     <application
         android:name=".FunnyApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher_ada"
         android:label="@string/app_name"
@@ -36,6 +36,7 @@
             android:exported="true"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Translucent"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -123,6 +124,11 @@
             android:name=".activity.StartCaptureScreenActivity"
             android:exported="true"
             android:theme="@style/AppTheme.Translucent"/>
+        <activity android:name=".ui.social.chat.ChatActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>

@@ -54,7 +54,6 @@ android {
         }
         debug {
             minifyEnabled false
-            signingConfig signingConfigs.release
         }
     }
 
@@ -84,4 +83,5 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
+
 }

@@ -278,6 +278,7 @@ object UriUtils {
                     file = cache
                     fos.close()
                     `is`.close()
+                    cursor.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
