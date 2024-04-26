@@ -47,6 +47,7 @@ import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.settings.*
+import com.funny.translation.translate.ui.social.main.MainPage
 import com.funny.translation.translate.ui.thanks.AnnualReportScreen
 import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
@@ -120,7 +121,7 @@ fun AppNavigation(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
                 }
-            ) { scaffoldPadding ->
+            ) { _ ->
                 NavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
@@ -174,6 +175,9 @@ fun AppNavigation(
                     }
                     animateComposable(TranslateScreen.ThanksScreen.route) {
                         ThanksScreen()
+                    }
+                    animateComposable(TranslateScreen.SocialScreen.route) {
+                        MainPage()
                     }
                     animateComposable(TranslateScreen.FloatWindowScreen.route) {
                         FloatWindowScreen()

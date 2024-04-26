@@ -39,3 +39,4 @@ include ':jet-setting-core'
 include ':login'
 
 include ':ai'
+include ':proxy'

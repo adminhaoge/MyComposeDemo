@@ -33,6 +33,7 @@
     <string name="plugin_engine">Plugins</string>
     <string name="engine_select">Engine</string>
     <string name="nav_thanks">Thanks</string>
+    <string name="nav_social">Social</string>
     <string name="thanks">Thanks</string>
     <string name="loading_error">Loading error</string>
     <string name="dialog_new_size">The size of new version: %s</string>

@@ -153,3 +153,12 @@ tasks.register("signApk", Exec) { exec ->
         printHello(exec)
     }
 }
+kotlin {
+    targets {
+        configure([]) {
+            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
+                languageVersion = "1.9"
+            }
+        }
+    }
+}

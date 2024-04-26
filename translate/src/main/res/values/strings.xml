@@ -33,6 +33,7 @@
     <string name="plugin_engine">插件</string>
     <string name="engine_select">设置引擎</string>
     <string name="nav_thanks">致谢</string>
+    <string name="nav_social">社交</string>
     <string name="thanks">致谢</string>
     <string name="loading_error">加载错误，点击重试</string>
     <string name="dialog_new_size">新版本大小：%s</string>
@@ -268,7 +269,7 @@
     <string name="exporting">正在导出，请稍等……</string>
     <string name="model_select">模型选择</string>
     <string name="model_select_help">不同的模型拥有不同的上下文长度，且有着不同的单价，越好的模型单价越高，请按需选择。</string>
-    <string name="currency_symbol">¥</string>
+    <string name="currency_symbol" translatable="false">¥</string>
     <string name="kilo_char">千字符</string>
     <string name="translate_paused_too_many_retries">重试次数已达上限，自动暂停</string>
     <string name="no_remark">暂无备注</string>
@@ -298,4 +299,5 @@
     <string name="model_engine">大模型</string>
     <string name="llm_engine_tip">使用大模型翻译需消耗AI文字点数，具体细则请前往“长文翻译”查看</string>
     <string name="load_llm_models">加载大模型列表</string>
+    <string name="title_dynamicfeature" translatable="false">Module Title</string>
 </resources>

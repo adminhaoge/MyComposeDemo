@@ -20,8 +20,8 @@
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog"/>
 
     <style name="AppTheme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/holo_red_dark</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
     </style>

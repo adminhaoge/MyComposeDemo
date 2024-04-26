@@ -19,10 +19,22 @@ import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.api
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 const val PASSWORD_TYPE_FINGERPRINT = "1"
 const val PASSWORD_TYPE_PASSWORD = "2"
+
+sealed interface MyModelUiState {
+    object Loading : MyModelUiState
+    data class Error(val throwable: Throwable) : MyModelUiState
+    data class Success(val data: UserInfoBean) : MyModelUiState
+}
 
 class LoginViewModel : ViewModel() {
     var username by mutableStateOf("")
@@ -48,7 +60,8 @@ class LoginViewModel : ViewModel() {
 
     // 1 -> 指纹
     // 2 -> 密码
-    var passwordType by mutableStateOf(if(AppConfig.lowerThanM) PASSWORD_TYPE_PASSWORD else PASSWORD_TYPE_FINGERPRINT)
+    var passwordType by mutableStateOf(if (AppConfig.lowerThanM) PASSWORD_TYPE_PASSWORD else PASSWORD_TYPE_FINGERPRINT)
+
     // 当在新设备登录时，需要验证邮箱
     var shouldVerifyEmailWhenLogin by mutableStateOf(false)
 
@@ -57,7 +70,7 @@ class LoginViewModel : ViewModel() {
 
     private val userService = UserUtils.userService
 
-    private fun clear(){
+    private fun clear() {
         email = ""
         verifyCode = ""
         finishSetFingerPrint = false
@@ -92,19 +105,37 @@ class LoginViewModel : ViewModel() {
     fun register(
         onSuccess: () -> Unit,
         onError: (String) -> Unit
-    ){
+    ) {
         val successAction = {
             onSuccess()
             clear()
         }
         viewModelScope.launch {
             try {
-                if (passwordType == PASSWORD_TYPE_FINGERPRINT){
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
+                if (passwordType == PASSWORD_TYPE_FINGERPRINT) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
                         throw SignUpException(string(R.string.different_fingerprint))
-                    UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "", inviteCode, successAction)
+                    UserUtils.register(
+                        username,
+                        "${AppConfig.androidId}#$encryptedInfo#$iv",
+                        passwordType,
+                        email,
+                        verifyCode,
+                        "",
+                        inviteCode,
+                        successAction
+                    )
                 } else {
-                    UserUtils.register(username, password, passwordType, email, verifyCode, "", inviteCode, successAction)
+                    UserUtils.register(
+                        username,
+                        password,
+                        passwordType,
+                        email,
+                        verifyCode,
+                        "",
+                        inviteCode,
+                        successAction
+                    )
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -114,7 +145,7 @@ class LoginViewModel : ViewModel() {
 
     }
 
-    fun sendVerifyEmail(context: Context){
+    fun sendVerifyEmail(context: Context) {
         viewModelScope.launch {
             api(userService::sendVerifyEmail, username, email) {
                 error {
@@ -124,7 +155,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun sendResetPasswordEmail(context: Context){
+    fun sendResetPasswordEmail(context: Context) {
         viewModelScope.launch {
             api(userService::sendResetPasswordEmail, username, email) {
                 error {
@@ -134,7 +165,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun sendFindUsernameEmail(context: Context){
+    fun sendFindUsernameEmail(context: Context) {
         viewModelScope.launch {
             api(userService::sendFindUsernameEmail, email) {
                 error {
@@ -144,7 +175,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun sendCancelAccountEmail(context: Context){
+    fun sendCancelAccountEmail(context: Context) {
         viewModelScope.launch {
             api(userService::sendCancelAccountEmail, username, email) {
                 error {
@@ -154,7 +185,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun resetPassword(context: Context, onSuccess: () -> Unit){
+    fun resetPassword(context: Context, onSuccess: () -> Unit) {
         viewModelScope.launch {
             api(userService::resetPassword, username, password, verifyCode) {
                 error {
@@ -178,7 +209,7 @@ class LoginViewModel : ViewModel() {
         ctx.toastOnUi(string(R.string.reset_fingerprint_success))
     }
 
-    fun findUsername(onSuccess: (List<String>) -> Unit){
+    fun findUsername(onSuccess: (List<String>) -> Unit) {
         viewModelScope.launch {
             api(userService::findUsername, email, verifyCode) {
                 success {
@@ -188,7 +219,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun cancelAccount(onSuccess: () -> Unit){
+    fun cancelAccount(onSuccess: () -> Unit) {
         viewModelScope.launch {
             api(userService::cancelAccount, verifyCode) {
                 addSuccess {
@@ -198,6 +229,11 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun updateUsername(s: String) { username = s }
-    fun updatePassword(s: String) { password = s }
+    fun updateUsername(s: String) {
+        username = s
+    }
+
+    fun updatePassword(s: String) {
+        password = s
+    }
 }

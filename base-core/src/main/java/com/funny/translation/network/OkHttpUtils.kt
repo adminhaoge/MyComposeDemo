@@ -16,6 +16,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.net.Proxy
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -43,6 +44,7 @@ object OkHttpUtils {
     private fun createBaseClient() = OkHttpClient().newBuilder().apply {
         connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
         readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+        proxy(Proxy.NO_PROXY)
         cache(cache)
         addInterceptor(HttpCacheInterceptor())
         // set request cookie
@@ -150,7 +152,7 @@ object OkHttpUtils {
 
     }.build()
 
-    val okHttpClient by lazy {
+    val okHttpClient by lazy(LazyThreadSafetyMode.NONE) {
         createBaseClient()
     }
 
@@ -184,12 +186,14 @@ object OkHttpUtils {
         timeout: IntArray? = null // [connectTimeout, readTimeout, writeTimeout]
     ): Response {
         val urlBuilder = url.toHttpUrl().newBuilder()
-        params?.let {
-            for ((key, value) in it) {
-                urlBuilder.addQueryParameter(key, value)
-            }
+        params?.forEach {
+            urlBuilder.addQueryParameter(it.key, it.value)
         }
-        val requestBuilder = Request.Builder().url(urlBuilder.build()).get()
+
+        val requestBuilder =
+            Request.Builder()
+                .url(urlBuilder.build())
+                .get()
         headersMap?.let {
             requestBuilder.addHeaders(it)
         }

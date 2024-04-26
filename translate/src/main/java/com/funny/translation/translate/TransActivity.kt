@@ -1,23 +1,28 @@
 package com.funny.translation.translate
 
+import android.R
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
@@ -31,6 +36,8 @@ import com.funny.translation.translate.utils.UpdateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+
 
 /**
  * 你好，很高兴见到你！
@@ -46,7 +53,7 @@ import kotlinx.coroutines.launch
  */
 
 class TransActivity : BaseActivity() {
-    private lateinit var activityViewModel: ActivityViewModel
+    private val activityViewModel: ActivityViewModel by viewModels()
     private lateinit var context: Context
     private lateinit var netWorkReceiver: NetworkReceiver
 
@@ -56,6 +63,18 @@ class TransActivity : BaseActivity() {
     companion object {
         const val TAG = "TransActivity"
         var initialized = false
+    }
+
+    private fun calculateInSampleSize(opt: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val outWidth = opt.outWidth
+        val outHeight = opt.outHeight
+        var inSampleSize = 0
+        if (outWidth > reqWidth || outHeight > reqHeight) {
+            val width = (outWidth / reqWidth).toDouble().roundToInt()
+            val height = (outHeight / reqHeight).toDouble().roundToInt()
+            inSampleSize = if (height < width) height else width
+        }
+        return inSampleSize
     }
 
     @OptIn(
@@ -69,7 +88,6 @@ class TransActivity : BaseActivity() {
         initLanguageDisplay(resources)
 
         context = this
-        activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
         lifecycle.addObserver(activityViewModel)
 
         registerNetworkReceiver()

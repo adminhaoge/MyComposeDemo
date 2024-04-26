@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.Redeem
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SocialDistance
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -73,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
+import com.funny.translation.Consts
 import com.funny.translation.NeedToTransConfig
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.SimpleAction
@@ -82,13 +84,17 @@ import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.translate.TranslationEngine
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.social.ComposeChat.accountProvider
 import com.funny.translation.translate.ui.widget.HintText
 import com.funny.translation.translate.ui.widget.SimpleNavigation
 import com.funny.translation.ui.AnyPopDialog
 import com.funny.translation.ui.FixedSizeIcon
+import com.hjq.toast.ToastUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -343,6 +349,7 @@ private fun EnginePart(
     engines: List<TranslationEngine>,
     updateSelectEngine: UpdateSelectedEngine
 ) {
+    val vm: MainViewModel = viewModel()
     Text(
         text = title,
         fontWeight = W600
@@ -360,6 +367,12 @@ private fun EnginePart(
             )
             FilterChip(selected = taskSelected, onClick = {
                 if (!taskSelected) { // 选中了
+                    if(vm.selectedEngines.size >= Consts.MAX_SELECT_ENGINES) {
+                        val resId = if (AppConfig.isVip()) R.string.message_out_of_max_engine_limit
+                        else R.string.message_out_of_max_engine_limit_novip
+                        ToastUtils.show(appCtx.getString(resId).format(Consts.MAX_SELECT_ENGINES, vm.selectedEngines.size))
+                        return@FilterChip
+                    }
                     updateSelectEngine.add(task)
                 } else updateSelectEngine.remove(task)
                 taskSelected = !taskSelected
@@ -372,7 +385,7 @@ private fun EnginePart(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun Drawer(
+fun Drawer(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -429,6 +442,7 @@ private fun Drawer(
             refreshing = true
             val user = AppConfig.userInfo.value
             if (user.isValid()){
+                if (user.isValid()) accountProvider.login(user.username)
                 api(UserUtils.userService::getInfo, user.uid) {
                     addSuccess {
                         it.data?.let {  user -> AppConfig.login(user) }
@@ -470,6 +484,7 @@ private fun Drawer(
             divider()
             drawerItem(Icons.Default.Info, TranslateScreen.AboutScreen)
             drawerItem(Icons.Default.Favorite, TranslateScreen.ThanksScreen)
+            drawerItem(Icons.Default.SocialDistance, TranslateScreen.SocialScreen)
             divider()
             drawerItem(Icons.Default.Apps, TranslateScreen.AppRecommendationScreen)
             drawerItem(Icons.Default.Redeem, TranslateScreen.AnnualReportScreen)

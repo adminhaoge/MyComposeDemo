@@ -9,6 +9,7 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
     object SettingScreen : TranslateScreen(R.string.nav_settings, "nav_trans_settings")
     object PluginScreen : TranslateScreen(R.string.nav_plugin, "nav_trans_plugin")
     object ThanksScreen : TranslateScreen(R.string.nav_thanks, "nav_thanks")
+    object SocialScreen : TranslateScreen(R.string.nav_social, "nav_social")
     object AboutScreen : TranslateScreen(R.string.about, "nav_trans_about")
     object OpenSourceLibScreen: TranslateScreen(R.string.open_source_library, "nav_trans_open_source_lib")
     object SortResultScreen :     TranslateScreen(R.string.sort_result, "nav_trans_sort_result")
